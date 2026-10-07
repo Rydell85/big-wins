@@ -1,3 +1,4 @@
 .env
-config.js
 __pycache__/
+# config.js IS committed: GitHub Pages serves it. It holds only the project URL
+# and the publishable key, which is public by design. Never put a secret key in it.
