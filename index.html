@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Big Wins Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #0F1D33;
+    --panel: #162843;
+    --line: #233a5c;
+    --amber: #FFB547;
+    --cyan: #7FD6E8;
+    --text: #E9EEF5;
+    --muted: #8396AE;
+    --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --body: "Barlow", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(120% 80% at 70% 0%, #17305a 0%, var(--sky) 60%) fixed, var(--sky);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: 100vh;
+    font-variant-numeric: tabular-nums;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 24px 32px 40px; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  h1 {
+    font-family: var(--display); font-weight: 800; font-size: 28px;
+    letter-spacing: .01em; margin: 0;
+  }
+  .status { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 15px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+  .status.live .dot { background: var(--cyan); box-shadow: 0 0 0 0 rgba(127,214,232,.6); animation: ping 2.4s infinite; }
+  .status.live { color: var(--text); }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(127,214,232,.55); } 70%,100% { box-shadow: 0 0 0 9px rgba(127,214,232,0); } }
+
+  .grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 24px; margin-top: 24px; }
+
+  /* The one bold element: the latest win, climbing like a flight. */
+  .hero {
+    position: relative; overflow: hidden; border-radius: 18px;
+    background: linear-gradient(180deg, rgba(22,40,67,.85), rgba(22,40,67,.55));
+    border: 1px solid var(--line);
+    padding: 28px 32px 32px; min-height: 380px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero .curve { fill: none; stroke: var(--cyan); stroke-width: 3; stroke-linecap: round; opacity: .9; }
+  .hero .area { fill: url(#fade); }
+  .hero .plane { fill: var(--cyan); }
+  .hero-content { position: relative; }
+  .game { font-size: 18px; color: var(--cyan); font-weight: 600; margin: 0 0 4px; }
+  .mult {
+    font-family: var(--display); font-weight: 800; color: var(--amber);
+    font-size: clamp(88px, 13vw, 184px); line-height: .86; margin: 0;
+    text-shadow: 0 0 40px rgba(255,181,71,.25);
+  }
+  .mult .x { font-size: .55em; margin-right: .04em; opacity: .85; }
+  .hero-line { font-size: clamp(18px, 2vw, 24px); margin: 14px 0 2px; font-weight: 500; }
+  .hero-line strong { color: var(--amber); font-weight: 600; }
+  .hero-meta { color: var(--muted); font-size: 15px; margin: 0; }
+  .best { display: inline-block; margin-left: 10px; color: var(--sky); background: var(--amber);
+          border-radius: 6px; padding: 1px 8px; font-size: 14px; font-weight: 600; vertical-align: 2px; }
+  .best[hidden] { display: none; }
+
+  .panel { border-radius: 14px; background: rgba(22,40,67,.6); border: 1px solid var(--line); padding: 20px 22px; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 22px; margin: 0 0 12px; letter-spacing: .01em; }
+
+  .top { list-style: none; margin: 0; padding: 0; }
+  .top li { display: grid; grid-template-columns: 28px 1fr auto; align-items: baseline; gap: 10px;
+            padding: 10px 0; border-top: 1px solid var(--line); }
+  .top li:first-child { border-top: 0; }
+  .rank { font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--muted); }
+  .top li:first-child .rank { color: var(--amber); }
+  .who { font-size: 15px; }
+  .who small { display: block; color: var(--muted); font-size: 13px; }
+  .tm { font-family: var(--display); font-weight: 800; font-size: 26px; color: var(--amber); }
+
+  .recent { margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; color: var(--muted); font-weight: 500; font-size: 14px; padding: 0 12px 8px 0; }
+  td { padding: 10px 12px 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  th.num, td.num { text-align: right; padding-right: 0; padding-left: 12px; }
+  td.m { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--amber); }
+  td.when { color: var(--muted); white-space: nowrap; }
+  tr.fresh td { animation: land 1.6s ease-out; }
+  @keyframes land { from { background: rgba(127,214,232,.16); } to { background: transparent; } }
+
+  .empty { color: var(--muted); padding: 8px 0; }
+  .empty code { color: var(--text); background: var(--sky); padding: 2px 6px; border-radius: 4px; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 18px; }
+
+  @media (max-width: 860px) {
+    .wrap { padding: 16px 16px 32px; }
+    .grid { grid-template-columns: 1fr; }
+    .hero { min-height: 300px; padding: 20px; }
+    .col-brand, .col-player { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .status.live .dot, tr.fresh td { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Big wins, live</h1>
+    <div class="status" id="status" role="status"><span class="dot"></span><span id="status-text">Connecting</span></div>
+  </header>
+
+  <div class="grid">
+    <section class="hero" aria-live="polite" aria-label="Latest big win">
+      <svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7FD6E8" stop-opacity=".22"/>
+            <stop offset="1" stop-color="#7FD6E8" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path class="area" id="area" d=""/>
+        <path class="curve" id="curve" d=""/>
+        <circle class="plane" id="plane" r="7" cx="-20" cy="-20"/>
+      </svg>
+      <div class="hero-content" id="hero">
+        <p class="game" id="h-game">Waiting for the first win</p>
+        <p class="mult"><span class="x">×</span><span id="h-mult">1.00</span></p>
+        <p class="hero-line" id="h-line">&nbsp;</p>
+        <p class="hero-meta"><span id="h-meta">&nbsp;</span><span class="best" id="h-best" hidden>Best today</span></p>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h2>Top multipliers today</h2>
+      <ol class="top" id="top"><li class="empty">None yet today.</li></ol>
+    </aside>
+  </div>
+
+  <section class="panel recent">
+    <h2>Recent big wins</h2>
+    <table>
+      <thead><tr>
+        <th>When</th><th>Game</th><th>Country</th><th class="col-brand">Brand</th><th class="col-player">Player</th>
+        <th class="num">Multiplier</th><th class="num">Bet</th><th class="num">Win</th>
+      </tr></thead>
+      <tbody id="recent"></tbody>
+    </table>
+    <p class="empty" id="recent-empty">No wins yet. Start the generator with <code>py -3.11 mock_wins.py</code>.</p>
+  </section>
+
+  <p class="note">Mock data for demonstration. Brands and players are invented.</p>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const cfg = window.BIG_WINS_CONFIG;
+  const $ = id => document.getElementById(id);
+  const setStatus = (text, live) => { $("status-text").textContent = text; $("status").classList.toggle("live", !!live); };
+
+  if (!cfg || !window.supabase) {
+    setStatus(!cfg ? "Not set up" : "Offline");
+    $("recent-empty").innerHTML = !cfg
+      ? "No connection settings yet. Run <code>py -3.11 mock_wins.py --once</code> in this folder, then reload."
+      : "Could not load the Supabase library. Check the internet connection and reload.";
+    return;
+  }
+
+  const db = window.supabase.createClient(cfg.url, cfg.key);
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const eur = new Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR" });
+  const mult = n => Number(n).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function ago(ts) {
+    const s = Math.max(0, (Date.now() - new Date(ts)) / 1000);
+    if (s < 45) return "just now";
+    if (s < 3600) return `${Math.round(s / 60)} min ago`;
+    if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+    return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  }
+  const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+
+  let recent = [], today = [];
+
+  // ---- Recent table -------------------------------------------------------
+  function renderRecent(freshId) {
+    $("recent-empty").hidden = recent.length > 0;
+    $("recent").innerHTML = recent.slice(0, 12).map(w => `
+      <tr class="${w.id === freshId ? "fresh" : ""}">
+        <td class="when" data-ts="${w.created_at}">${ago(w.created_at)}</td>
+        <td>${esc(w.game)}</td><td>${esc(w.country)}</td>
+        <td class="col-brand">${esc(w.brand)}</td><td class="col-player">${esc(w.player)}</td>
+        <td class="num m">×${mult(w.multiplier)}</td>
+        <td class="num">${eur.format(w.bet_eur)}</td><td class="num">${eur.format(w.win_eur)}</td>
+      </tr>`).join("");
+  }
+
+  // ---- Top today ----------------------------------------------------------
+  function renderTop() {
+    const list = [...today].sort((a, b) => b.multiplier - a.multiplier).slice(0, 5);
+    $("top").innerHTML = list.length ? list.map((w, i) => `
+      <li><span class="rank">${i + 1}</span>
+        <span class="who">${esc(w.game)}<small>${esc(w.country)}, ${eur.format(w.win_eur)} won</small></span>
+        <span class="tm">×${mult(w.multiplier)}</span></li>`).join("")
+      : `<li class="empty">None yet today.</li>`;
+  }
+
+  // ---- Hero: the multiplier climbs the way a crash round does, exponentially.
+  // v(t) = m^(t/T): the same growth curve the game itself draws, ending at the win.
+  const W = 1000, H = 400, PAD = 24;
+  let queue = [], busy = false;
+
+  function curvePoints(m, t) {
+    const pts = [], steps = 80, lm = Math.log(Math.max(m, 1.0001));
+    for (let i = 0; i <= steps * t; i++) {
+      const x = i / steps;
+      const y = (Math.exp(lm * x) - 1) / (m - 1 || 1);
+      pts.push([PAD + x * (W - 2 * PAD), H - PAD - y * (H * 0.72)]);
+    }
+    return pts;
+  }
+  function drawCurve(m, t) {
+    const pts = curvePoints(m, t);
+    if (pts.length < 2) { $("curve").setAttribute("d", ""); $("area").setAttribute("d", ""); return; }
+    const d = "M" + pts.map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" L");
+    const last = pts[pts.length - 1];
+    $("curve").setAttribute("d", d);
+    $("area").setAttribute("d", `${d} L${last[0].toFixed(1)} ${H} L${PAD} ${H} Z`);
+    $("plane").setAttribute("cx", last[0]); $("plane").setAttribute("cy", last[1]);
+  }
+
+  function showHero(w) {
+    const m = Number(w.multiplier);
+    const isBest = today.length > 0 && m >= Math.max(...today.map(x => Number(x.multiplier)));
+    $("h-game").textContent = `${w.game} in ${w.country}`;
+    $("h-line").innerHTML = `${esc(w.player)} won <strong>${eur.format(w.win_eur)}</strong> on a ${eur.format(w.bet_eur)} bet`;
+    $("h-meta").textContent = `${w.brand}, ${ago(w.created_at)}`;
+    $("h-meta").dataset.ts = w.created_at; $("h-meta").dataset.brand = w.brand;
+    $("h-best").hidden = !isBest;
+
+    if (reduceMotion) { $("h-mult").textContent = mult(m); drawCurve(m, 1); return Promise.resolve(); }
+    // Bigger wins fly longer, but never past ~3.2s so a busy feed keeps moving.
+    const T = Math.min(1100 + Math.log10(m) * 650, 3200);
+    return new Promise(done => {
+      const t0 = performance.now();
+      const frame = now => {
+        const t = Math.min((now - t0) / T, 1);
+        $("h-mult").textContent = mult(Math.pow(m, t));
+        drawCurve(m, t);
+        t < 1 ? requestAnimationFrame(frame) : done();
+      };
+      requestAnimationFrame(frame);
+    });
+  }
+
+  async function pump() {
+    if (busy) return;
+    busy = true;
+    while (queue.length) {
+      // Several wins landed during one flight: skip to the newest, the table has the rest.
+      const w = queue[queue.length - 1]; queue = [];
+      await showHero(w);
+      await new Promise(r => setTimeout(r, 2200));   // let the number be read
+    }
+    busy = false;
+  }
+
+  // ---- Data ---------------------------------------------------------------
+  async function load() {
+    const [r, t] = await Promise.all([
+      db.from("big_wins").select("*").order("created_at", { ascending: false }).limit(12),
+      db.from("big_wins").select("*").gte("created_at", startOfToday().toISOString())
+        .order("multiplier", { ascending: false }).limit(5),
+    ]);
+    if (r.error || t.error) {
+      const msg = (r.error || t.error).message;
+      setStatus("Offline");
+      $("recent-empty").hidden = false;
+      $("recent-empty").innerHTML = /permission|42501|does not exist/i.test(msg)
+        ? "The big_wins table is missing or locked. Run <code>setup.sql</code> in the Supabase SQL editor, then reload."
+        : `Could not load wins: ${esc(msg)}`;
+      return false;
+    }
+    recent = r.data; today = t.data;
+    renderRecent(); renderTop();
+    if (recent[0]) { queue.push(recent[0]); pump(); }
+    return true;
+  }
+
+  function onInsert(w) {
+    recent = [w, ...recent].slice(0, 50);
+    if (new Date(w.created_at) >= startOfToday()) today = [...today, w];
+    renderRecent(w.id); renderTop();
+    queue.push(w); pump();
+  }
+
+  load().then(ok => {
+    if (!ok) return;
+    db.channel("big-wins")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "big_wins" }, p => onInsert(p.new))
+      .subscribe(s => {
+        if (s === "SUBSCRIBED") setStatus("Live", true);
+        else if (s === "CHANNEL_ERROR" || s === "TIMED_OUT") setStatus("Reconnecting");
+        else if (s === "CLOSED") setStatus("Offline");
+      });
+  });
+
+  // Keep the "x min ago" labels honest.
+  setInterval(() => {
+    document.querySelectorAll("td.when").forEach(td => td.textContent = ago(td.dataset.ts));
+    const meta = $("h-meta");
+    if (meta.dataset.ts) meta.textContent = `${meta.dataset.brand}, ${ago(meta.dataset.ts)}`;
+  }, 30000);
+})();
+</script>
+</body>
+</html>
