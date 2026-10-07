@@ -58,6 +58,8 @@
   .hero .area { fill: url(#fade); }
   .hero .plane { fill: var(--cyan); }
   .hero-content { position: relative; }
+  /* The curve passes behind the text: a halo in the panel colour keeps it legible. */
+  .game, .hero-line, .hero-meta { text-shadow: 0 0 6px #142640, 0 0 14px #142640, 0 0 22px #142640; }
   .game { font-size: 18px; color: var(--cyan); font-weight: 600; margin: 0 0 4px; }
   .mult {
     font-family: var(--display); font-weight: 800; color: var(--amber);
@@ -86,6 +88,7 @@
   .tm { font-family: var(--display); font-weight: 800; font-size: 26px; color: var(--amber); }
 
   .recent { margin-top: 24px; }
+  .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
   th { text-align: left; color: var(--muted); font-weight: 500; font-size: 14px; padding: 0 12px 8px 0; }
   td { padding: 10px 12px 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
@@ -103,7 +106,9 @@
     .wrap { padding: 16px 16px 32px; }
     .grid { grid-template-columns: 1fr; }
     .hero { min-height: 300px; padding: 20px; }
-    .col-brand, .col-player { display: none; }
+    .col-brand, .col-player, .col-bet { display: none; }
+    td, th { font-size: 14px; }
+    td.m { font-size: 18px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .status.live .dot, tr.fresh td { animation: none; }
@@ -146,13 +151,13 @@
 
   <section class="panel recent">
     <h2>Recent big wins</h2>
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr>
         <th>When</th><th>Game</th><th>Country</th><th class="col-brand">Brand</th><th class="col-player">Player</th>
-        <th class="num">Multiplier</th><th class="num">Bet</th><th class="num">Win</th>
+        <th class="num">Multiplier</th><th class="num col-bet">Bet</th><th class="num">Win</th>
       </tr></thead>
       <tbody id="recent"></tbody>
-    </table>
+    </table></div>
     <p class="empty" id="recent-empty">No wins yet. Start the generator with <code>py -3.11 mock_wins.py</code>.</p>
   </section>
 
@@ -201,7 +206,7 @@
         <td>${esc(w.game)}</td><td>${esc(w.country)}</td>
         <td class="col-brand">${esc(w.brand)}</td><td class="col-player">${esc(w.player)}</td>
         <td class="num m">×${mult(w.multiplier)}</td>
-        <td class="num">${eur.format(w.bet_eur)}</td><td class="num">${eur.format(w.win_eur)}</td>
+        <td class="num col-bet">${eur.format(w.bet_eur)}</td><td class="num">${eur.format(w.win_eur)}</td>
       </tr>`).join("");
   }
 
